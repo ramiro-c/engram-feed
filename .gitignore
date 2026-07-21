@@ -29,3 +29,14 @@ go.work
 # End of https://www.toptal.com/developers/gitignore/api/go
 
 .env
+
+
+# Logs
+logs
+*.log
+web/pnpm-debug.log*
+
+web/node_modules
+web/dist
+web/dist-ssr
+*.local
