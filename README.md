@@ -90,6 +90,10 @@ web/              Preact + Vite frontend
 web/embed.go      go:embed shim that pulls web/dist into the Go binary
 ```
 
+## License
+
+MIT, see [LICENSE](./LICENSE).
+
 ## Acknowledgments
 
 - [Engram](https://github.com/Gentleman-Programming/engram), the persistent memory system for AI coding agents this project reads from.
