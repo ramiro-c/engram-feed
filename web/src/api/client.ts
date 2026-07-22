@@ -31,6 +31,7 @@ export interface ObservationFilters {
   type?: string
   topic_key?: string
   session_id?: string
+  pinned?: boolean
   q?: string
   limit?: number
   offset?: number
@@ -53,10 +54,10 @@ async function request<T>(path: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-function buildQuery(params: Record<string, string | number | undefined>): string {
+function buildQuery(params: Record<string, string | number | boolean | undefined>): string {
   const search = new URLSearchParams()
   for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === '') continue
+    if (value === undefined || value === '' || value === false) continue
     search.set(key, String(value))
   }
   const qs = search.toString()
@@ -69,6 +70,7 @@ export function fetchObservations(filters: ObservationFilters): Promise<ListResp
     type: filters.type,
     topic_key: filters.topic_key,
     session_id: filters.session_id,
+    pinned: filters.pinned,
     q: filters.q,
     limit: filters.limit,
     offset: filters.offset,

@@ -32,6 +32,7 @@ type ListFilters struct {
 	Type      string
 	TopicKey  string
 	SessionID string
+	Pinned    bool
 	Query     string
 	Limit     int
 	Offset    int
@@ -74,6 +75,9 @@ func List(ctx context.Context, sqlDB *sql.DB, f ListFilters) (ListResult, error)
 	if f.SessionID != "" {
 		whereClauses = append(whereClauses, "o.session_id = ?")
 		args = append(args, f.SessionID)
+	}
+	if f.Pinned {
+		whereClauses = append(whereClauses, "o.pinned = 1")
 	}
 
 	fromClause := base
