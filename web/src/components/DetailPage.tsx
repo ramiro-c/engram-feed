@@ -43,22 +43,22 @@ export function DetailPage({ id, onBack, onSelect }: DetailPageProps) {
   }, [id])
 
   return (
-    <div class="rounded-xl bg-paper shadow-sm">
-      <div class="flex items-center gap-3 border-b border-hairline px-4 py-3">
+    <div class="bg-paper shadow-sm rounded-xl">
+      <div class="flex items-center gap-3 px-4 py-3 border-hairline border-b">
         <button
           type="button"
           onClick={onBack}
-          class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink transition-colors hover:bg-canvas"
+          class="flex justify-center items-center hover:bg-canvas rounded-full w-8 h-8 text-ink transition-colors cursor-pointer shrink-0"
           aria-label="Back to feed"
         >
-          <ArrowLeft class="h-4.5 w-4.5" strokeWidth={2.25} />
+          <ArrowLeft class="w-4.5 h-4.5" strokeWidth={2.25} />
         </button>
-        <span class="text-[15px] font-bold text-ink">Observation</span>
+        <span class="font-bold text-[15px] text-ink">Observation</span>
       </div>
 
       <div class="p-5">
-        {loading && <p class="text-sm text-ash">Loading...</p>}
-        {error && <p class="text-sm font-medium text-ink">{error}</p>}
+        {loading && <p class="text-ash text-sm">Loading...</p>}
+        {error && <p class="font-medium text-ink text-sm">{error}</p>}
 
         {observation && (
           <>
@@ -70,15 +70,15 @@ export function DetailPage({ id, onBack, onSelect }: DetailPageProps) {
                 {observation.pinned && (
                   <span
                     title="Pinned"
-                    class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-white ring-2 ring-paper"
+                    class="-top-1 -right-1 absolute flex justify-center items-center bg-accent rounded-full ring-2 ring-paper w-4 h-4 text-white"
                   >
-                    <Pin class="h-2.5 w-2.5" fill="currentColor" strokeWidth={0} />
+                    <Pin class="w-2.5 h-2.5" fill="currentColor" strokeWidth={0} />
                   </span>
                 )}
               </span>
-              <div class="min-w-0 flex-1">
+              <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-baseline gap-1.5 text-[15px]">
-                  <span class="truncate font-bold text-ink">{observation.project || 'unscoped'}</span>
+                  <span class="font-bold text-ink truncate">{observation.project || 'unscoped'}</span>
                   <span class="text-ash">·</span>
                   <span class="text-ash">{observation.type}</span>
                 </div>
@@ -86,15 +86,15 @@ export function DetailPage({ id, onBack, onSelect }: DetailPageProps) {
               </div>
             </div>
 
-            <h2 class="mt-4 break-words text-lg font-bold leading-snug text-ink">{observation.title}</h2>
+            <h2 class="mt-4 font-bold text-ink text-lg wrap-break-word leading-snug">{observation.title}</h2>
 
             {observation.topic_key && (
-              <div class="mt-2.5 flex flex-wrap gap-1.5">
+              <div class="flex flex-wrap gap-1.5 mt-2.5">
                 {observation.topic_key
                   .split('/')
                   .filter(Boolean)
                   .map((tag) => (
-                    <span key={tag} class="rounded-full bg-canvas px-2.5 py-0.5 text-xs text-ash">
+                    <span key={tag} class="bg-canvas px-2.5 py-0.5 rounded-full text-ash text-xs">
                       #{tag}
                     </span>
                   ))}
@@ -106,8 +106,8 @@ export function DetailPage({ id, onBack, onSelect }: DetailPageProps) {
             </div>
 
             {related.length > 0 && (
-              <div class="mt-6 border-t border-hairline pt-4">
-                <p class="mb-1 text-xs font-bold uppercase tracking-wide text-ash">
+              <div class="mt-6 pt-4 border-hairline border-t">
+                <p class="mb-1 font-bold text-ash text-xs uppercase tracking-wide">
                   In this session · {related.length} related
                 </p>
                 <RelatedThread items={related} onSelect={onSelect} collapsible={false} />
