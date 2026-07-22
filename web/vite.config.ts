@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
-import UnoCSS from 'unocss/vite'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [UnoCSS(), preact()],
+  plugins: [tailwindcss(), preact()],
   server: {
     proxy: {
       '/api': {
