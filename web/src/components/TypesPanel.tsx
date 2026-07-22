@@ -7,24 +7,31 @@ export function TypesPanel() {
   const onSelectType = (type: string) => quickFilter({ type: type || undefined })
 
   return (
-    <aside class="bg-white shadow-sm rounded-lg">
+    <aside class="rounded-xl bg-paper shadow-sm">
+      <p class="px-4 pb-1 pt-3 text-xs font-bold uppercase tracking-wide text-ash">Types</p>
       <nav class="flex flex-col pb-2">
-        {types.length === 0 && <p class="px-4 py-2 text-gray-400 text-sm">No types yet</p>}
+        {types.length === 0 && <p class="px-4 py-2 text-sm text-ash">No types yet</p>}
         <button
           type="button"
           onClick={() => onSelectType('')}
-          class={cn('hover:bg-gray-50 px-4 py-2.5 w-full text-left cursor-pointer', !activeType && 'bg-gray-50')}
+          class={cn(
+            'w-full cursor-pointer px-4 py-2 text-left text-sm font-semibold transition-colors hover:bg-canvas',
+            !activeType ? 'text-accent' : 'text-ink/70',
+          )}
         >
-          <p class="font-bold text-gray-600 text-sm">All types</p>
+          All types
         </button>
         {types.map((t) => (
           <button
             key={t}
             type="button"
             onClick={() => onSelectType(t)}
-            class={cn('hover:bg-gray-50 px-4 py-2.5 w-full text-left cursor-pointer', activeType === t && 'bg-gray-50')}
+            class={cn(
+              'w-full cursor-pointer truncate px-4 py-2 text-left text-sm font-semibold transition-colors hover:bg-canvas',
+              activeType === t ? 'text-accent' : 'text-ink/70',
+            )}
           >
-            <p class="font-bold text-gray-600 text-sm truncate">{t}</p>
+            {t}
           </button>
         ))}
       </nav>

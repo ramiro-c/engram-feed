@@ -34,11 +34,11 @@ export function Select({ value, placeholder, options, onChange, class: className
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        class="flex justify-between items-center gap-2 bg-gray-100 hover:bg-gray-200 py-2 pr-2.5 pl-3 rounded-lg w-full text-black text-sm cursor-pointer"
+        class="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-canvas py-2 pl-3 pr-2.5 text-sm text-ink ring-1 ring-transparent transition-colors hover:bg-hairline/60 focus:ring-accent/40"
       >
-        <span class={cn('truncate', !value && 'text-gray-500')}>{value || placeholder}</span>
+        <span class={cn('truncate', !value && 'text-ash')}>{value || placeholder}</span>
         <svg
-          class={cn('w-3.5 h-3.5 text-gray-500 transition-transform shrink-0', open && 'rotate-180')}
+          class={cn('h-3.5 w-3.5 shrink-0 text-ash transition-transform', open && 'rotate-180')}
           viewBox="0 0 20 20"
           fill="none"
           stroke="currentColor"
@@ -49,13 +49,13 @@ export function Select({ value, placeholder, options, onChange, class: className
       </button>
 
       {open && (
-        <div class="top-[calc(100%+6px)] left-0 z-30 absolute bg-white shadow-md py-1 rounded-lg w-full overflow-hidden">
+        <div class="absolute left-0 top-[calc(100%+6px)] z-30 w-full overflow-hidden rounded-lg bg-paper py-1 shadow-md ring-1 ring-hairline">
           <button
             type="button"
             onClick={() => select('')}
             class={cn(
-              'block hover:bg-gray-50 px-3 py-2 w-full text-sm text-left cursor-pointer',
-              !value ? 'font-semibold text-black' : 'text-gray-600',
+              'block w-full cursor-pointer px-3 py-2 text-left text-sm hover:bg-canvas',
+              !value ? 'font-semibold text-accent' : 'text-ink/70',
             )}
           >
             {placeholder}
@@ -66,8 +66,8 @@ export function Select({ value, placeholder, options, onChange, class: className
               type="button"
               onClick={() => select(opt)}
               class={cn(
-                'block hover:bg-gray-50 px-3 py-2 w-full text-sm text-left truncate cursor-pointer',
-                value === opt ? 'font-semibold text-black' : 'text-gray-600',
+                'block w-full cursor-pointer truncate px-3 py-2 text-left text-sm hover:bg-canvas',
+                value === opt ? 'font-semibold text-accent' : 'text-ink/70',
               )}
             >
               {opt}

@@ -14,7 +14,7 @@ export function SearchBox() {
     <form onSubmit={submit}>
       <div class="relative">
         <svg
-          class="top-1/2 left-4 absolute w-4 h-4 text-gray-400 -translate-y-1/2 pointer-events-none"
+          class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ash"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -31,7 +31,7 @@ export function SearchBox() {
           placeholder="Search observations..."
           disabled={loading}
           onInput={(e) => setDraft((e.target as HTMLInputElement).value)}
-          class="bg-gray-100 focus:bg-white disabled:opacity-60 focus:shadow-sm py-3 pr-4 pl-10 rounded-full outline-none w-full text-black text-sm"
+          class="w-full rounded-full bg-canvas py-3 pl-10 pr-4 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-paper focus:shadow-sm focus:ring-accent/40 disabled:opacity-60"
         />
       </div>
     </form>

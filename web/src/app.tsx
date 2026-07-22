@@ -17,29 +17,29 @@ function FeedRoute() {
     <>
       <FilterBar project={filters.project} type={filters.type} />
 
-      {error && <p class="bg-white shadow-sm px-4 py-2 rounded-lg font-medium text-black text-sm">{error}</p>}
-      {loading && <p class="px-1 text-gray-500 text-sm">Loading...</p>}
+      {error && <p class="rounded-xl bg-paper px-4 py-2 text-sm font-medium text-ink shadow-sm">{error}</p>}
+      {loading && <p class="px-1 text-sm text-ash">Loading...</p>}
 
       {result && <FeedList items={result.items} onSelect={(id) => navigate(`/observations/${id}`)} />}
 
       {result && (
-        <div class="flex justify-between items-center bg-white shadow-sm px-4 py-2 rounded-lg text-sm">
+        <div class="flex items-center justify-between rounded-xl bg-paper px-4 py-2 text-sm shadow-sm">
           <button
             type="button"
             onClick={prevPage}
             disabled={!hasPrev || loading}
-            class="px-3 py-1 font-medium text-black disabled:text-gray-300 cursor-pointer disabled:cursor-default"
+            class="cursor-pointer px-3 py-1 font-medium text-ink disabled:cursor-default disabled:text-ash/40"
           >
             Previous
           </button>
-          <span class="text-gray-500">
+          <span class="text-ash">
             {offset + 1}-{Math.min(offset + pageSize, result.total)} of {result.total}
           </span>
           <button
             type="button"
             onClick={nextPage}
             disabled={!hasNext || loading}
-            class="px-3 py-1 font-medium text-black disabled:text-gray-300 cursor-pointer disabled:cursor-default"
+            class="cursor-pointer px-3 py-1 font-medium text-ink disabled:cursor-default disabled:text-ash/40"
           >
             Next
           </button>
@@ -51,13 +51,24 @@ function FeedRoute() {
 
 function DetailRoute({ id }: { id: string }) {
   const { route: navigate } = useLocation()
-  return <DetailPage id={Number(id)} onBack={() => navigate('/')} />
+  return <DetailPage id={Number(id)} onBack={() => navigate('/')} onSelect={(nextId) => navigate(`/observations/${nextId}`)} />
+}
+
+function TopBar() {
+  return (
+    <header class="sticky top-0 z-20 border-b border-hairline bg-paper/80 backdrop-blur-sm">
+      <div class="mx-auto flex w-full max-w-6xl items-center gap-2 px-4 py-3">
+        <span class="h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
+        <span class="text-[15px] font-bold tracking-tight text-ink">Engram Feed</span>
+      </div>
+    </header>
+  )
 }
 
 function FeedLayout() {
   return (
     <div class="gap-4 grid grid-cols-1 lg:grid-cols-[220px_1fr_220px] mx-auto px-4 py-4 w-full max-w-6xl">
-      <div class="lg:top-4 lg:sticky lg:self-start">
+      <div class="lg:top-16 lg:sticky lg:self-start">
         <Sidebar />
       </div>
 
@@ -68,7 +79,7 @@ function FeedLayout() {
         </Router>
       </main>
 
-      <div class="lg:top-4 lg:sticky flex flex-col lg:self-start gap-4">
+      <div class="lg:top-16 lg:sticky flex flex-col lg:self-start gap-4">
         <SearchBox />
         <TypesPanel />
       </div>
@@ -79,7 +90,8 @@ function FeedLayout() {
 export function App() {
   return (
     <FeedProvider>
-      <div class="flex flex-col bg-gray-50">
+      <div class="flex min-h-screen flex-col bg-canvas">
+        <TopBar />
         <FeedLayout />
       </div>
     </FeedProvider>

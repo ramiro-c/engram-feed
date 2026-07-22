@@ -28,12 +28,13 @@ type Observation struct {
 }
 
 type ListFilters struct {
-	Project  string
-	Type     string
-	TopicKey string
-	Query    string
-	Limit    int
-	Offset   int
+	Project   string
+	Type      string
+	TopicKey  string
+	SessionID string
+	Query     string
+	Limit     int
+	Offset    int
 }
 
 type ListResult struct {
@@ -69,6 +70,10 @@ func List(ctx context.Context, sqlDB *sql.DB, f ListFilters) (ListResult, error)
 	if f.TopicKey != "" {
 		whereClauses = append(whereClauses, "o.topic_key = ?")
 		args = append(args, f.TopicKey)
+	}
+	if f.SessionID != "" {
+		whereClauses = append(whereClauses, "o.session_id = ?")
+		args = append(args, f.SessionID)
 	}
 
 	fromClause := base

@@ -10,6 +10,6 @@ interface MarkdownProps {
 export function Markdown({ content, class: className }: MarkdownProps) {
   const html = DOMPurify.sanitize(marked.parse(content, { async: false }))
   return (
-    <div class={cn('markdown-content text-sm text-gray-800', className)} dangerouslySetInnerHTML={{ __html: html }} />
+    <div class={cn('markdown-content text-sm text-ink/85', className)} dangerouslySetInnerHTML={{ __html: html }} />
   )
 }

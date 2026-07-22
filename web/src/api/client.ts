@@ -30,6 +30,7 @@ export interface ObservationFilters {
   project?: string
   type?: string
   topic_key?: string
+  session_id?: string
   q?: string
   limit?: number
   offset?: number
@@ -67,6 +68,7 @@ export function fetchObservations(filters: ObservationFilters): Promise<ListResp
     project: filters.project,
     type: filters.type,
     topic_key: filters.topic_key,
+    session_id: filters.session_id,
     q: filters.q,
     limit: filters.limit,
     offset: filters.offset,

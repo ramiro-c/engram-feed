@@ -131,12 +131,13 @@ func (h *Handlers) ListObservations(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 	filters := db.ListFilters{
-		Project:  q.Get("project"),
-		Type:     q.Get("type"),
-		TopicKey: q.Get("topic_key"),
-		Query:    q.Get("q"),
-		Limit:    limit,
-		Offset:   offset,
+		Project:   q.Get("project"),
+		Type:      q.Get("type"),
+		TopicKey:  q.Get("topic_key"),
+		SessionID: q.Get("session_id"),
+		Query:     q.Get("q"),
+		Limit:     limit,
+		Offset:    offset,
 	}
 
 	result, err := db.List(r.Context(), h.DB, filters)

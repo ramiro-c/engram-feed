@@ -23,7 +23,7 @@ export function FilterBar({ project, type }: FilterBarProps) {
   }
 
   return (
-    <form class="flex flex-col gap-3 bg-white shadow-sm p-3 rounded-lg" onSubmit={submit}>
+    <form class="flex flex-col gap-3 rounded-xl bg-paper p-3 shadow-sm" onSubmit={submit}>
       <div class="flex flex-1 items-center gap-2">
         <Select
           class="flex-1"
@@ -45,13 +45,13 @@ export function FilterBar({ project, type }: FilterBarProps) {
           placeholder="topic_key"
           value={topicKey}
           onInput={(e) => setTopicKey((e.target as HTMLInputElement).value)}
-          class="flex-1 bg-gray-100 px-3 py-2 rounded-lg text-black text-sm"
+          class="flex-1 rounded-lg bg-canvas px-3 py-2 text-sm text-ink outline-none ring-1 ring-transparent focus:ring-accent/40"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        class="self-end bg-black disabled:opacity-40 px-4 py-2 rounded-lg font-medium text-white text-sm cursor-pointer disabled:cursor-default"
+        class="cursor-pointer self-end rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent disabled:cursor-default disabled:opacity-40"
       >
         {loading ? 'Loading...' : 'Apply'}
       </button>

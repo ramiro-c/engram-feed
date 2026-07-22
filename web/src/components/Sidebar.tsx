@@ -8,21 +8,21 @@ export function Sidebar() {
   const onSelectProject = (project: string) => quickFilter({ project: project || undefined })
 
   return (
-    <aside class="rounded-lg bg-white shadow-sm">
+    <aside class="rounded-xl bg-paper shadow-sm">
       <div class="p-4">
-        <p class="text-sm text-gray-500">Total observations</p>
-        <p class="text-2xl font-bold text-black">{total ?? '—'}</p>
+        <p class="text-sm text-ash">Total observations</p>
+        <p class="text-2xl font-bold tracking-tight text-ink">{total ?? '—'}</p>
       </div>
 
-      <nav class="flex flex-col gap-1 p-2 pt-0">
-        <p class="px-3 pb-1 text-xs font-semibold uppercase text-gray-400">Projects</p>
-        {projects.length === 0 && <p class="px-3 py-1 text-sm text-gray-400">No projects yet</p>}
+      <nav class="flex flex-col gap-0.5 p-2 pt-0">
+        <p class="px-3 pb-1 text-xs font-bold uppercase tracking-wide text-ash">Projects</p>
+        {projects.length === 0 && <p class="px-3 py-1 text-sm text-ash">No projects yet</p>}
         <button
           type="button"
           onClick={() => onSelectProject('')}
           class={cn(
-            'w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm hover:bg-gray-50',
-            !activeProject ? 'bg-gray-100 font-semibold text-black' : 'text-gray-600',
+            'w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-canvas',
+            !activeProject ? 'bg-accent-soft font-semibold text-accent' : 'text-ink/70',
           )}
         >
           All projects
@@ -33,8 +33,8 @@ export function Sidebar() {
             type="button"
             onClick={() => onSelectProject(p)}
             class={cn(
-              'w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm hover:bg-gray-50',
-              activeProject === p ? 'bg-gray-100 font-semibold text-black' : 'text-gray-600',
+              'w-full cursor-pointer truncate rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-canvas',
+              activeProject === p ? 'bg-accent-soft font-semibold text-accent' : 'text-ink/70',
             )}
           >
             {p}
