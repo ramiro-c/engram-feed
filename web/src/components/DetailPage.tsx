@@ -1,3 +1,4 @@
+import { ArrowLeft, Pin } from 'lucide-preact'
 import { useEffect, useState } from 'preact/hooks'
 import { fetchObservation, fetchObservations, type Observation } from '../api/client'
 import { formatRelativeTime, typeBadgeClass, typeInitial } from '../lib/format'
@@ -50,7 +51,7 @@ export function DetailPage({ id, onBack, onSelect }: DetailPageProps) {
           class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink transition-colors hover:bg-canvas"
           aria-label="Back to feed"
         >
-          ←
+          <ArrowLeft class="h-4.5 w-4.5" strokeWidth={2.25} />
         </button>
         <span class="text-[15px] font-bold text-ink">Observation</span>
       </div>
@@ -69,9 +70,9 @@ export function DetailPage({ id, onBack, onSelect }: DetailPageProps) {
                 {observation.pinned && (
                   <span
                     title="Pinned"
-                    class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] text-white ring-2 ring-paper"
+                    class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-white ring-2 ring-paper"
                   >
-                    ★
+                    <Pin class="h-2.5 w-2.5" fill="currentColor" strokeWidth={0} />
                   </span>
                 )}
               </span>

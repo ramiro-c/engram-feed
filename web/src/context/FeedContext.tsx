@@ -13,7 +13,6 @@ interface FeedContextValue {
   result: ListResponse | null
   loading: boolean
   error: string | null
-  applyFilters: (filters: ObservationFilters) => void
   search: (q: string) => void
   quickFilter: (patch: Partial<ObservationFilters>) => void
   prevPage: () => void
@@ -53,12 +52,6 @@ export function FeedProvider({ children }: { children: ComponentChildren }) {
     load({}, 0)
   }, [])
 
-  function applyFilters(nextFilters: ObservationFilters) {
-    const merged = { ...nextFilters, q: filters.q }
-    setFilters(merged)
-    load(merged, 0)
-  }
-
   function search(q: string) {
     const merged = { ...filters, q: q || undefined }
     setFilters(merged)
@@ -89,7 +82,6 @@ export function FeedProvider({ children }: { children: ComponentChildren }) {
     result,
     loading,
     error,
-    applyFilters,
     search,
     quickFilter,
     prevPage,

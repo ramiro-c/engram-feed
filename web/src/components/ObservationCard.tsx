@@ -1,3 +1,4 @@
+import { Pin } from 'lucide-preact'
 import type { Observation } from '../api/client'
 import { formatRelativeTime, truncate, typeBadgeClass, typeInitial } from '../lib/format'
 import { Markdown } from './Markdown'
@@ -24,9 +25,9 @@ export function ObservationCard({ observation, onSelect }: ObservationCardProps)
         {observation.pinned && (
           <span
             title="Pinned"
-            class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] text-white ring-2 ring-paper"
+            class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-white ring-2 ring-paper"
           >
-            ★
+            <Pin class="h-2.5 w-2.5" fill="currentColor" strokeWidth={0} />
           </span>
         )}
       </span>
