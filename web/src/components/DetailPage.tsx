@@ -4,6 +4,7 @@ import { fetchObservation, fetchObservations, type Observation } from '../api/cl
 import { formatRelativeTime, typeBadgeClass, typeInitial } from '../lib/format'
 import { Markdown } from './Markdown'
 import { RelatedThread } from './RelatedThread'
+import { TopicTags } from './TopicTags'
 
 interface DetailPageProps {
   id: number
@@ -88,18 +89,7 @@ export function DetailPage({ id, onBack, onSelect }: DetailPageProps) {
 
             <h2 class="mt-4 font-bold text-ink text-lg wrap-break-word leading-snug">{observation.title}</h2>
 
-            {observation.topic_key && (
-              <div class="flex flex-wrap gap-1.5 mt-2.5">
-                {observation.topic_key
-                  .split('/')
-                  .filter(Boolean)
-                  .map((tag) => (
-                    <span key={tag} class="bg-canvas px-2.5 py-0.5 rounded-full text-ash text-xs">
-                      #{tag}
-                    </span>
-                  ))}
-              </div>
-            )}
+            {observation.topic_key && <TopicTags class="mt-2.5" topicKey={observation.topic_key} />}
 
             <div class="mt-4 max-w-full">
               <Markdown content={observation.content} />

@@ -2,14 +2,11 @@ import { Pin } from 'lucide-preact'
 import type { Observation } from '../api/client'
 import { formatRelativeTime, truncate, typeBadgeClass, typeInitial } from '../lib/format'
 import { Markdown } from './Markdown'
+import { TopicTags } from './TopicTags'
 
 interface ObservationCardProps {
   observation: Observation
   onSelect: (id: number) => void
-}
-
-function topicTags(topicKey: string): string[] {
-  return topicKey.split('/').filter(Boolean)
 }
 
 export function ObservationCard({ observation, onSelect }: ObservationCardProps) {
@@ -43,15 +40,7 @@ export function ObservationCard({ observation, onSelect }: ObservationCardProps)
 
         <Markdown class="mt-1 text-[14px] leading-relaxed text-ink/80" content={truncate(observation.content, 220)} />
 
-        {observation.topic_key && (
-          <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
-            {topicTags(observation.topic_key).map((tag) => (
-              <span key={tag} class="rounded-full bg-canvas px-2.5 py-0.5 text-xs text-ash">
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
+        {observation.topic_key && <TopicTags class="mt-2.5" topicKey={observation.topic_key} />}
       </div>
     </article>
   )

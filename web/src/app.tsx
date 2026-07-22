@@ -1,3 +1,4 @@
+import { X } from 'lucide-preact'
 import { Route, Router, useLocation } from 'preact-iso'
 import { FeedProvider, useFeed } from './context/FeedContext'
 import { SearchBox } from './components/SearchBox'
@@ -8,12 +9,27 @@ import { DetailPage } from './components/DetailPage'
 
 function FeedRoute() {
   const { route: navigate } = useLocation()
-  const { result, loading, error, prevPage, nextPage, offset, pageSize } = useFeed()
+  const { filters, result, loading, error, quickFilter, prevPage, nextPage, offset, pageSize } = useFeed()
   const hasPrev = offset > 0
   const hasNext = result !== null && offset + pageSize < result.total
 
   return (
     <>
+      {filters.topic_key && (
+        <div class="flex items-center gap-2 rounded-xl bg-paper px-4 py-2 text-sm shadow-sm">
+          <span class="text-ash">Filtered by</span>
+          <span class="font-semibold text-accent">#{filters.topic_key}</span>
+          <button
+            type="button"
+            onClick={() => quickFilter({ topic_key: undefined })}
+            class="ml-auto flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-ash transition-colors hover:bg-canvas hover:text-ink"
+            aria-label="Clear topic filter"
+          >
+            <X class="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {error && <p class="bg-paper shadow-sm px-4 py-2 rounded-xl font-medium text-ink text-sm">{error}</p>}
       {loading && <p class="px-1 text-ash text-sm">Loading...</p>}
 

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"io/fs"
 	"log"
 	"net"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"github.com/0xvarg/engram-feed/internal/api"
 	"github.com/0xvarg/engram-feed/internal/db"
 	"github.com/0xvarg/engram-feed/internal/httpserver"
+	"github.com/0xvarg/engram-feed/web"
 )
 
 const defaultAddr = "127.0.0.1:8080"
@@ -46,8 +48,13 @@ func main() {
 		log.Fatalf("engram-feed: database unavailable: %v", err)
 	}
 
+	distFS, err := fs.Sub(web.Dist, "dist")
+	if err != nil {
+		log.Fatalf("engram-feed: load embedded frontend: %v", err)
+	}
+
 	handlers := api.New(sqlDB)
-	srv := httpserver.New(port, handlers)
+	srv := httpserver.New(port, handlers, distFS)
 
 	log.Printf("engram-feed: listening on %s", *addr)
 	if err := srv.Start(); err != nil {

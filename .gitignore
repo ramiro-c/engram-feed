@@ -37,6 +37,7 @@ logs
 web/pnpm-debug.log*
 
 web/node_modules
-web/dist
+web/dist/*
+!web/dist/.gitkeep
 web/dist-ssr
 *.local
