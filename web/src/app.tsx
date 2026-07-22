@@ -1,13 +1,79 @@
 import { useEffect, useState } from 'preact/hooks'
+import { Route, Router, useLocation } from 'preact-iso'
 import { fetchObservations, fetchProjects, fetchTypes, type ListResponse, type ObservationFilters } from './api/client'
 import { SearchBox } from './components/SearchBox'
 import { Sidebar } from './components/Sidebar'
 import { TypesPanel } from './components/TypesPanel'
 import { FilterBar } from './components/FilterBar'
 import { FeedList } from './components/FeedList'
-import { DetailView } from './components/DetailView'
+import { DetailPage } from './components/DetailPage'
 
 const PAGE_SIZE = 20
+
+interface FeedRouteProps {
+  projects: string[]
+  types: string[]
+  filters: ObservationFilters
+  result: ListResponse | null
+  loading: boolean
+  error: string | null
+  onApply: (filters: ObservationFilters) => void
+  onSelect: (id: number) => void
+  onPrev: () => void
+  onNext: () => void
+  offset: number
+}
+
+function FeedRoute({ projects, types, filters, result, loading, error, onApply, onSelect, onPrev, onNext, offset }: FeedRouteProps) {
+  const hasPrev = offset > 0
+  const hasNext = result !== null && offset + PAGE_SIZE < result.total
+
+  return (
+    <>
+      <FilterBar
+        projects={projects}
+        types={types}
+        project={filters.project}
+        type={filters.type}
+        onApply={onApply}
+        loading={loading}
+      />
+
+      {error && <p class="bg-white shadow-sm px-4 py-2 rounded-lg font-medium text-black text-sm">{error}</p>}
+      {loading && <p class="px-1 text-gray-500 text-sm">Loading...</p>}
+
+      {result && <FeedList items={result.items} onSelect={onSelect} />}
+
+      {result && (
+        <div class="flex justify-between items-center bg-white shadow-sm px-4 py-2 rounded-lg text-sm">
+          <button
+            type="button"
+            onClick={onPrev}
+            disabled={!hasPrev || loading}
+            class="px-3 py-1 font-medium text-black disabled:text-gray-300 cursor-pointer disabled:cursor-default"
+          >
+            Previous
+          </button>
+          <span class="text-gray-500">
+            {offset + 1}-{Math.min(offset + PAGE_SIZE, result.total)} of {result.total}
+          </span>
+          <button
+            type="button"
+            onClick={onNext}
+            disabled={!hasNext || loading}
+            class="px-3 py-1 font-medium text-black disabled:text-gray-300 cursor-pointer disabled:cursor-default"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </>
+  )
+}
+
+function DetailRoute({ id, onBack }: { id: string; onBack: () => void }) {
+  return <DetailPage id={Number(id)} onBack={onBack} />
+}
 
 export function App() {
   const [projects, setProjects] = useState<string[]>([])
@@ -17,7 +83,7 @@ export function App() {
   const [result, setResult] = useState<ListResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const { route: navigate } = useLocation()
 
   useEffect(() => {
     fetchProjects()
@@ -68,9 +134,6 @@ export function App() {
     load(filters, offset + PAGE_SIZE)
   }
 
-  const hasPrev = offset > 0
-  const hasNext = result !== null && offset + PAGE_SIZE < result.total
-
   return (
     <div class="flex flex-col bg-gray-50">
       <div class="gap-4 grid grid-cols-1 lg:grid-cols-[220px_1fr_220px] mx-auto px-4 py-4 w-full max-w-6xl">
@@ -83,44 +146,25 @@ export function App() {
           />
         </div>
 
-        <main class="flex flex-col gap-3">
-          <FilterBar
-            projects={projects}
-            types={types}
-            project={filters.project}
-            type={filters.type}
-            onApply={handleApply}
-            loading={loading}
-          />
-
-          {error && <p class="bg-white shadow-sm px-4 py-2 rounded-lg font-medium text-black text-sm">{error}</p>}
-          {loading && <p class="px-1 text-gray-500 text-sm">Loading...</p>}
-
-          {result && <FeedList items={result.items} onSelect={setSelectedId} />}
-
-          {result && (
-            <div class="flex justify-between items-center bg-white shadow-sm px-4 py-2 rounded-lg text-sm">
-              <button
-                type="button"
-                onClick={handlePrev}
-                disabled={!hasPrev || loading}
-                class="px-3 py-1 font-medium text-black disabled:text-gray-300 cursor-pointer disabled:cursor-default"
-              >
-                Previous
-              </button>
-              <span class="text-gray-500">
-                {offset + 1}-{Math.min(offset + PAGE_SIZE, result.total)} of {result.total}
-              </span>
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={!hasNext || loading}
-                class="px-3 py-1 font-medium text-black disabled:text-gray-300 cursor-pointer disabled:cursor-default"
-              >
-                Next
-              </button>
-            </div>
-          )}
+        <main class="flex min-w-0 flex-col gap-3">
+          <Router>
+            <Route
+              path="/"
+              component={FeedRoute}
+              projects={projects}
+              types={types}
+              filters={filters}
+              result={result}
+              loading={loading}
+              error={error}
+              onApply={handleApply}
+              onSelect={(id: number) => navigate(`/observations/${id}`)}
+              onPrev={handlePrev}
+              onNext={handleNext}
+              offset={offset}
+            />
+            <Route path="/observations/:id" component={DetailRoute} onBack={() => navigate('/')} />
+          </Router>
         </main>
 
         <div class="lg:top-4 lg:sticky flex flex-col lg:self-start gap-4">
@@ -132,8 +176,6 @@ export function App() {
           />
         </div>
       </div>
-
-      {selectedId !== null && <DetailView id={selectedId} onClose={() => setSelectedId(null)} />}
     </div>
   )
 }
