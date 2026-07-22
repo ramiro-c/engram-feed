@@ -1,13 +1,12 @@
 import { cn } from '../lib/utils'
+import { useFeed } from '../context/FeedContext'
 
-interface SidebarProps {
-  total: number | null
-  projects: string[]
-  activeProject?: string
-  onSelectProject: (project: string) => void
-}
+export function Sidebar() {
+  const { result, projects, filters, quickFilter } = useFeed()
+  const total = result?.total ?? null
+  const activeProject = filters.project
+  const onSelectProject = (project: string) => quickFilter({ project: project || undefined })
 
-export function Sidebar({ total, projects, activeProject, onSelectProject }: SidebarProps) {
   return (
     <aside class="rounded-lg bg-white shadow-sm">
       <div class="p-4">

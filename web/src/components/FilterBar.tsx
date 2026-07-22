@@ -1,24 +1,21 @@
 import { useState } from 'preact/hooks'
-import type { ObservationFilters } from '../api/client'
+import { useFeed } from '../context/FeedContext'
 import { Select } from './Select'
 
 interface FilterBarProps {
-  projects: string[]
-  types: string[]
   project?: string
   type?: string
-  onApply: (filters: ObservationFilters) => void
-  loading: boolean
 }
 
-export function FilterBar({ projects, types, project, type, onApply, loading }: FilterBarProps) {
+export function FilterBar({ project, type }: FilterBarProps) {
+  const { projects, types, applyFilters, loading } = useFeed()
   const [selectedProject, setSelectedProject] = useState(project ?? '')
   const [selectedType, setSelectedType] = useState(type ?? '')
   const [topicKey, setTopicKey] = useState('')
 
   function submit(e: Event) {
     e.preventDefault()
-    onApply({
+    applyFilters({
       project: selectedProject || undefined,
       type: selectedType || undefined,
       topic_key: topicKey || undefined,

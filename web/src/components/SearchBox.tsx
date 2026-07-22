@@ -1,17 +1,13 @@
 import { useState } from 'preact/hooks'
+import { useFeed } from '../context/FeedContext'
 
-interface SearchBoxProps {
-  q: string
-  onSearch: (q: string) => void
-  loading: boolean
-}
-
-export function SearchBox({ q, onSearch, loading }: SearchBoxProps) {
-  const [draft, setDraft] = useState(q)
+export function SearchBox() {
+  const { filters, search, loading } = useFeed()
+  const [draft, setDraft] = useState(filters.q ?? '')
 
   function submit(e: Event) {
     e.preventDefault()
-    onSearch(draft.trim())
+    search(draft.trim())
   }
 
   return (

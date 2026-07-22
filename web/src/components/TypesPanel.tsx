@@ -1,12 +1,11 @@
 import { cn } from '../lib/utils'
+import { useFeed } from '../context/FeedContext'
 
-interface TypesPanelProps {
-  types: string[]
-  activeType?: string
-  onSelectType: (type: string) => void
-}
+export function TypesPanel() {
+  const { types, filters, quickFilter } = useFeed()
+  const activeType = filters.type
+  const onSelectType = (type: string) => quickFilter({ type: type || undefined })
 
-export function TypesPanel({ types, activeType, onSelectType }: TypesPanelProps) {
   return (
     <aside class="bg-white shadow-sm rounded-lg">
       <nav class="flex flex-col pb-2">
