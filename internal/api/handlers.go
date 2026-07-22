@@ -24,25 +24,57 @@ func New(sqlDB *sql.DB) *Handlers {
 	return &Handlers{DB: sqlDB}
 }
 
-func writeJSON(w http.ResponseWriter, status int, body any) {
+func jsonResponse(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	if err := json.NewEncoder(w).Encode(body); err != nil {
+	if err := json.NewEncoder(w).Encode(data); err != nil {
 		log.Printf("write json response: %v", err)
 	}
 }
 
-func writeError(w http.ResponseWriter, status int, message string) {
-	writeJSON(w, status, ErrorResponse{Error: message})
+func jsonError(w http.ResponseWriter, status int, msg string) {
+	jsonResponse(w, status, map[string]string{"error": msg})
+}
+
+func jsonErrorWithFields(w http.ResponseWriter, status int, msg string, fields map[string]any) {
+	payload := map[string]any{"error": msg}
+	for key, value := range fields {
+		payload[key] = value
+	}
+	jsonResponse(w, status, payload)
+}
+
+func queryInt(r *http.Request, key string, defaultVal int) int {
+	v := r.URL.Query().Get(key)
+	if v == "" {
+		return defaultVal
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil {
+		return defaultVal
+	}
+	return n
+}
+
+func queryBool(r *http.Request, key string, defaultVal bool) bool {
+	v := r.URL.Query().Get(key)
+	if v == "" {
+		return defaultVal
+	}
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		return defaultVal
+	}
+	return b
 }
 
 func writeDBError(w http.ResponseWriter, err error) {
 	if errors.Is(err, sql.ErrNoRows) {
-		writeError(w, http.StatusNotFound, "not found")
+		jsonError(w, http.StatusNotFound, "not found")
 		return
 	}
 	log.Printf("database error: %v", err)
-	writeError(w, http.StatusServiceUnavailable, "database unavailable")
+	jsonError(w, http.StatusServiceUnavailable, "database unavailable")
 }
 
 func toAPIObservation(o db.Observation) Observation {
@@ -64,35 +96,36 @@ func toAPIObservation(o db.Observation) Observation {
 	}
 }
 
-func parseIntParam(r *http.Request, name string, defaultVal int) (int, error) {
-	raw := r.URL.Query().Get(name)
-	if raw == "" {
-		return defaultVal, nil
-	}
-	v, err := strconv.Atoi(raw)
-	if err != nil {
-		return 0, errors.New("invalid " + name + ": must be an integer")
-	}
-	if v < 0 {
-		return 0, errors.New("invalid " + name + ": must not be negative")
-	}
-	return v, nil
-}
-
 func (h *Handlers) ListObservations(w http.ResponseWriter, r *http.Request) {
-	limit, err := parseIntParam(r, "limit", defaultLimit)
-	if err != nil {
-		writeError(w, http.StatusBadRequest, err.Error())
+	limit := defaultLimit
+	if v := r.URL.Query().Get("limit"); v != "" {
+		n, err := strconv.Atoi(v)
+		if err != nil {
+			jsonErrorWithFields(w, http.StatusBadRequest, "invalid limit: must be an integer", map[string]any{"limit": v})
+			return
+		}
+		limit = n
+	}
+	if limit < 0 {
+		jsonErrorWithFields(w, http.StatusBadRequest, "invalid limit: must not be negative", map[string]any{"limit": limit})
 		return
 	}
 	if limit > maxLimit {
-		writeError(w, http.StatusBadRequest, "invalid limit: must not exceed 100")
+		jsonErrorWithFields(w, http.StatusBadRequest, "invalid limit: must not exceed 100", map[string]any{"limit": limit})
 		return
 	}
 
-	offset, err := parseIntParam(r, "offset", 0)
-	if err != nil {
-		writeError(w, http.StatusBadRequest, err.Error())
+	offset := 0
+	if v := r.URL.Query().Get("offset"); v != "" {
+		n, err := strconv.Atoi(v)
+		if err != nil {
+			jsonErrorWithFields(w, http.StatusBadRequest, "invalid offset: must be an integer", map[string]any{"offset": v})
+			return
+		}
+		offset = n
+	}
+	if offset < 0 {
+		jsonErrorWithFields(w, http.StatusBadRequest, "invalid offset: must not be negative", map[string]any{"offset": offset})
 		return
 	}
 
@@ -109,9 +142,7 @@ func (h *Handlers) ListObservations(w http.ResponseWriter, r *http.Request) {
 	result, err := db.List(r.Context(), h.DB, filters)
 	if err != nil {
 		if filters.Query != "" {
-			// A non-empty q that fails is treated as a malformed filter
-			// param per spec, not a DB-unavailable condition.
-			writeError(w, http.StatusBadRequest, "invalid search query")
+			jsonError(w, http.StatusBadRequest, "invalid search query")
 			return
 		}
 		writeDBError(w, err)
@@ -123,7 +154,7 @@ func (h *Handlers) ListObservations(w http.ResponseWriter, r *http.Request) {
 		items = append(items, toAPIObservation(o))
 	}
 
-	writeJSON(w, http.StatusOK, ListResponse{
+	jsonResponse(w, http.StatusOK, ListResponse{
 		Items:  items,
 		Total:  result.Total,
 		Limit:  limit,
@@ -135,7 +166,7 @@ func (h *Handlers) GetObservation(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "invalid id: must be an integer")
+		jsonError(w, http.StatusBadRequest, "invalid id: must be an integer")
 		return
 	}
 
@@ -145,7 +176,7 @@ func (h *Handlers) GetObservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, toAPIObservation(o))
+	jsonResponse(w, http.StatusOK, toAPIObservation(o))
 }
 
 func (h *Handlers) ListProjects(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +185,7 @@ func (h *Handlers) ListProjects(w http.ResponseWriter, r *http.Request) {
 		writeDBError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, DistinctResponse{Items: values})
+	jsonResponse(w, http.StatusOK, DistinctResponse{Items: values})
 }
 
 func (h *Handlers) ListTypes(w http.ResponseWriter, r *http.Request) {
@@ -163,5 +194,5 @@ func (h *Handlers) ListTypes(w http.ResponseWriter, r *http.Request) {
 		writeDBError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, DistinctResponse{Items: values})
+	jsonResponse(w, http.StatusOK, DistinctResponse{Items: values})
 }
