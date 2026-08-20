@@ -31,7 +31,7 @@ func main() {
 	addr := flag.String("addr", envOrDefault("ENGRAM_FEED_ADDR", defaultForAddr), "address to listen on")
 	flag.Parse()
 
-	port, err := addrToPort(*addr)
+	_, err := addrToPort(*addr)
 	if err != nil {
 		log.Fatalf("engram-feed: invalid --addr %q: %v", *addr, err)
 	}
@@ -54,7 +54,7 @@ func main() {
 	}
 
 	handlers := api.New(sqlDB)
-	srv := httpserver.New(port, handlers, distFS)
+	srv := httpserver.New(*addr, handlers, distFS)
 
 	log.Printf("engram-feed: listening on %s", *addr)
 	if err := srv.Start(); err != nil {

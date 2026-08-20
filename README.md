@@ -53,6 +53,23 @@ pnpm dev
 
 Open the URL Vite prints (typically `http://localhost:5173`).
 
+## Running with Docker
+
+One command runs the whole stack — the API plus the frontend dev server with hot reload:
+
+```bash
+docker compose up -d --build
+```
+
+| Service           | URL                    | Notes                                    |
+| ----------------- | ---------------------- | ---------------------------------------- |
+| Frontend (Vite)   | http://localhost:5173  | Proxies `/api` to the API container      |
+| API               | http://localhost:8080  | `GET /health` for a liveness check       |
+
+The API container mounts `~/.engram/engram.db` **read-only**, matching the app's no-write guarantee. If the database changes on the host, restart the API container to pick it up: `docker compose restart engram-feed`. Stop everything with `docker compose down`.
+
+> Note: run `up` with `--build` whenever a Dockerfile or dependency changed — a plain `up` reuses stale images.
+
 ## Building the single binary
 
 ```bash
