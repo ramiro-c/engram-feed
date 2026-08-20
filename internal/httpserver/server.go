@@ -1,7 +1,6 @@
 package httpserver
 
 import (
-	"fmt"
 	"io/fs"
 	"net/http"
 
@@ -10,17 +9,18 @@ import (
 
 type HTTPServer struct {
 	mux      *http.ServeMux
-	port     int
+	addr     string
 	handler  *api.Handlers
 	staticFS fs.FS
 }
 
 // New wires up routes for the JSON API plus, when staticFS is non-nil, the
 // embedded frontend build. staticFS may be nil (e.g. in tests) to run the
-// API alone.
-func New(port int, handler *api.Handlers, staticFS fs.FS) *HTTPServer {
+// API alone. addr is the full listen address (host:port), e.g.
+// "127.0.0.1:8080" locally or "0.0.0.0:8080" inside a container.
+func New(addr string, handler *api.Handlers, staticFS fs.FS) *HTTPServer {
 	srv := &HTTPServer{
-		port:     port,
+		addr:     addr,
 		handler:  handler,
 		staticFS: staticFS,
 	}
@@ -30,6 +30,5 @@ func New(port int, handler *api.Handlers, staticFS fs.FS) *HTTPServer {
 }
 
 func (s *HTTPServer) Start() error {
-	addr := fmt.Sprintf("127.0.0.1:%d", s.port)
-	return http.ListenAndServe(addr, s.mux)
+	return http.ListenAndServe(s.addr, s.mux)
 }

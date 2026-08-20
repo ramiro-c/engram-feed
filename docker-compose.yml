@@ -1,0 +1,40 @@
+services:
+  engram-feed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      # Use ${HOME} — more portable than ~ across Compose implementations.
+      # If you prefer ~, replace with ~/.engram:/root/.engram:ro (Compose also expands ~).
+      - ${HOME}/.engram:/root/.engram:ro
+    environment:
+      - ENGRAM_FEED_ADDR=0.0.0.0:8080
+      - ENGRAM_DSN=/root/.engram/engram.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_TARGET=http://engram-feed:8080
+    restart: unless-stopped
+    depends_on:
+      engram-feed:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5173"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
