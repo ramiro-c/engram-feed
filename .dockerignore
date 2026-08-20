@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+.github
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+*.log
+logs
+
+# Go build artifacts
+engram-feed
+*.out
+*.test
+
+# Web - built artifacts and deps (reinstalled inside Docker)
+web/node_modules
+web/dist
+web/dist-ssr
+web/.vite
+
+# Cache / tooling
+.atl/
+.cachebro/
+.cache/
+
+# Docker itself (avoid self-copy)
+Dockerfile
+docker-compose.yml
+.dockerignore
+web/Dockerfile
